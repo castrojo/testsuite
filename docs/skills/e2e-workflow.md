@@ -32,7 +32,7 @@ jobs:
 | Input | Type | Default | Description |
 |-------|------|---------|-------------|
 | `image` | string | `ghcr.io/projectbluefin/dakota:latest` | OCI image to test (must be a bootc/ostree image) |
-| `suites` | string | `smoke` | Comma-separated suite names: `smoke`, `developer`, `dx`, `software` |
+| `suites` | string | `smoke` | Comma-separated suite names (examples): `smoke`, `common`, `developer`, `dx`, `software`, `vanilla-gnome`, `bazzite` |
 
 Multiple suites run as a matrix (parallel jobs):
 
@@ -61,7 +61,7 @@ with:
 8. **Wait for SSH** — polls port 2222 up to 5 minutes
 9. **Wait for GNOME session** — polls `/run/user/1001/wayland-0` up to 3 minutes
 10. **Install Python test stack** — pip installs `qecore behave dogtail python-uinput` inside the VM; captures `DBUS_SESSION_BUS_ADDRESS`, `WAYLAND_DISPLAY`, `XDG_RUNTIME_DIR` into `/tmp/session.env`
-11. **Copy testsuite + run behave** — SCPs `tests/<suite>` and `tests/shared` to VM; runs `qecore-headless behave … --format json.pretty`
+11. **Copy testsuite + run behave** — SCPs `tests/__init__.py`, `tests/<suite>`, and `tests/shared` to VM; runs `qecore-headless behave … --format json.pretty`
 12. **Write job summary** — parses `results.json`, writes pass/fail table + failed scenario list to GitHub Step Summary
 13. **Upload artifacts** — `e2e-results-<suite>` (results JSON + text, 30 days) and `vm-serial-log-<suite>` (3 days)
 
@@ -104,7 +104,7 @@ The "Wait for GNOME session" step runs `journalctl -u gdm --no-pager -n 50` on t
 
 ### behave: UndefinedStep
 
-The testsuite is checked out sparse (`tests/<suite>` + `tests/shared` only). If the suite imports from a path outside those two directories, the copy will be incomplete. Verify the suite's `environment.py` imports.
+The testsuite is checked out sparse (`tests/__init__.py`, `tests/<suite>`, and `tests/shared`). If the suite imports from a path outside those directories, the copy will be incomplete. Verify the suite's `environment.py` imports.
 
 ### Timeout (90 min job limit)
 
