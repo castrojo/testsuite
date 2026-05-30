@@ -76,6 +76,7 @@ jobs:
           sparse-checkout: |
             tests/${{ matrix.suite }}
             tests/shared
+            tests/__init__.py
           sparse-checkout-cone-mode: true
 
       - name: Free disk space
